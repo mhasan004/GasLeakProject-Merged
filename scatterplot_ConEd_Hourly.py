@@ -4,7 +4,7 @@ import plotly.express as px
 import numpy as np
 import pandas as pd
 
-csvFile   = "GasHistory_2010_ReportFrequency_Hourly.csv"
+csvFile   = "DataFiles/GasHistory_2010_ReportFrequency_Hourly.csv"
 hourlyDF = pd.read_csv(csvFile)  
 hourlyDF = hourlyDF.sort_values("Date", ascending=True)
 csvHeader = ['MonthYear', 'Hours', 'NumberOfReports'] 

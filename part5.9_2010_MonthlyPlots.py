@@ -11,14 +11,14 @@ import numpy as np
 import csv                             
 
 # A) CREATING DF AND GDF:
-csvFile     = "GasHistory_2010_ReportFrequency_Monthly.csv"
-outNYCFile  = "GasHistory_2010_ReportFrequency_Monthly_nycPlot.csv"
-outWestFile = "GasHistory_2010_ReportFrequency_Monthly_westchesterPlot.csv"
+csvFile     = "DataFiles/GasHistory_2010_ReportFrequency_Monthly.csv"
+outNYCFile  = "DataFiles/GasHistory_2010_ReportFrequency_Monthly_nycPlot.csv"
+outWestFile = "DataFiles/GasHistory_2010_ReportFrequency_Monthly_westchesterPlot.csv"
 
-nycFile = "NYU_NYC_34505_SP/nyu_2451_34505.shp"
-brooklynFile = "TIGER_2010_County_Shapefiles/BrooklynCounty_2010SHP/tl_2010_36047_tract10.shp"
-statenFile = "TIGER_2010_County_Shapefiles/StatenIslanCounty_2010SHP"
-westchesterFile = "westchester2010/wctigtrt10.shp"
+nycFile      = "ShapeFiles/NYU_NYC_34505_SP/nyu_2451_34505.shp"
+brooklynFile = "ShapeFiles/TIGER_2010_County_Shapefiles/BrooklynCounty_2010SHP/tl_2010_36047_tract10.shp"
+statenFile   = "ShapeFiles/TIGER_2010_County_Shapefiles/StatenIslanCounty_2010SHP"
+westchesterFile = "ShapeFiles/westchester2010/wctigtrt10.shp"
 monthlyDF = pd.read_csv(csvFile)                                                                            # Read the csv file and make a data frame
 nycGDF = gp.read_file(nycFile)                                                                           # Read the shape file and make a data frame
 brooklynGDF = gp.read_file(brooklynFile)
