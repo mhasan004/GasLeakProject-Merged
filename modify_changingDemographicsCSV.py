@@ -7,7 +7,7 @@ demoCsvFile = "DataFiles/Crime and Demographics/ACS_10_5YR_S0101_with_ann.csv"
 newCSV      = "DataFiles/Crime and Demographics/filtered_CensusTract_Demographic_Data_NYCWestchester.csv"
 
 demoDF  = pd.read_csv(demoCsvFile)  
-targetCounties = ["Bronx County", "Westchester County", 'New York County', 'Queens County', 'Kings County', 'Richmond County' ]
+targetCounties = ["Bronx County", "Westchester County", 'New York County', 'Queens County']#, 'Kings County', 'Richmond County' ]
 
 print(demoDF)
 dfCols = list(demoDF.columns)
@@ -54,23 +54,8 @@ demoDF = demoDF.drop(index=deleteRows)
 demoDF = demoDF.reset_index(drop=True)
 
 
-# ----NVM JUST USE EXCELL TO DELETE THE ROWS THAT HAS ALL "-,-,-,-,-,-,-,-" # DROPPING ALL ROWS THAT HAS over 10 "-" ONLY
-# deleteRows = set()
-# # randomCol = "HC01_EST_VC39"
-# for row in range(0, len(demoDF)):
-#     count = 0
-#     for col in range(0, len(list(demoDF.columns))):
-#     # if demoDF.iloc[row][randomCol] == "-":
+# ----USE EXCELL TO DELETE THE ROWS THAT HAS ALL "-,-,-,-,-,-,-,-" # DROPPING ALL ROWS THAT HAS over 10 "-" ONLY
 
-#         rowsToDel = demoDF.index[demoDF[dfCols[col]] == "-"].tolist()
-#         for i in range(0, len(rowsToDel)):
-#             deleteRows.add(rowsToDel[i])
-
-# deleteRows = list(deleteRows)
-# deleteRows.sort(reverse = False)   
-# demoDF = demoDF.drop(index=deleteRows)
-# demoDF = demoDF.reset_index(drop=True)
-# print(deleteRows)
 
 print(demoDF)
 demoDF.to_csv(newCSV, index=False )
