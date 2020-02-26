@@ -12,9 +12,10 @@ y = 10870
 z = 14329
 fig = go.Figure(data=
     go.Parcoords(
-        line = dict(color = demoDF['Id'],
-                #    colorscale = [[0,'purple'],[0.5,'lightseagreen'],[1,'gold']]
-                ),
+        line = dict(
+            color = demoDF['Id'],
+            #    colorscale = [[0,'purple'],[0.5,'lightseagreen'],[1,'gold']]
+            ),
         dimensions = list([
             dict(
                 range = [0,15000],
