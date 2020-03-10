@@ -7,50 +7,66 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import stats
+import dash_html_components as html
+from dash.dependencies import Input, Output
+import json
+
+from textwrap import dedent as d
 
 corrCSVFile = "DataFiles/FDNY/Seasonal2017_2018_Demographic_Correlation.csv"
 corr = pd.read_csv(corrCSVFile)
 
 widthPlot  = 900
 heightPlot = 900
+
 # 1) PLOT 1: ALL SEASONS
 season_to_do = "ALL_SEASONS"
 figALL = px.scatter(corr, x="DemographicVariable", y=season_to_do, color=season_to_do, 
     color_continuous_scale=px.colors.sequential.RdBu,
     width=widthPlot, height=heightPlot,
     hover_data=['DemographicVariable', "ALL_SEASONS"]
-)
+    )
 figALL.update_layout(
     title = '(Pearson r Correlation) '+"All Seasons"+' Reports VS Demographic Data',
     yaxis_title = "All Seasons"+' vs Demographic Variables Correlation',
     xaxis_title = "Demographic Variables",
 )
 
-# 2) 4 PLOTS: 4 SEASON'S figs IN A DICT 
-corrDict = dict()
-seasons = ["Spring","Summer","Autumn","Winter"]
-for season in seasons:
-    fig = px.scatter(corr, x="DemographicVariable", y=season, color=season, 
-                    color_continuous_scale=px.colors.sequential.RdBu,
-                    width=widthPlot, height=heightPlot)
+# 2) A scatter plot function for any demograpic variable vs ALL_SEASON col
+corrCSVFile2 = "DataFiles/FDNY/Seasonal2017_2018_Demographics.csv"
+corr = pd.read_csv(corrCSVFile2)
+# Isolate the demographic column
+nonDemoCols = ["Geoid","Spring","Summer","Autumn","Winter","ALL_SEASONS","Id","Geography"]
+cols = list(corr.columns)
+demoCols = []
+for col in cols:
+    if col not in nonDemoCols:
+        demoCols.append(col)
+#demoCols[0]
+def returnDemoScatterFig(chosenCol):     
+    fig = px.scatter(corr, x="ALL_SEASONS", y=chosenCol, color=chosenCol, hover_data=['Geoid', "ALL_SEASONS", "Geography" ],     opacity=0.2)
     fig.update_layout(
-        title = '(Pearson r Correlation) '+season+' Reports VS Demographic Data',
-        yaxis_title = season+' vs Demographic Variables Correlation',
-        xaxis_title = "Demographic Variables",
+        title = "Number of Reports Per Census Tract (All Seasons) vs "+chosenCol,
+        xaxis_title = "Number of Reports Per Census Tract (All Seasons)",
+        yaxis_title = chosenCol,
     )
-    corrDict[season] = fig
-
+    return fig
 
 # #######################################################
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']           # external cssCSS file for Bootstraps
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)            # initialize app with the external CSS file
-
+styles = {
+    'pre': {
+        'border': 'thin lightgrey solid',
+        'overflowX': 'scroll'
+    }
+}
 colors = {
     'text': 'white',
     'background': 'lightblue'
 }
-
+s = dict()
 app.layout = html.Div(
     html.Div(                                                                   # 1. GLOBAL DIV STARTS
         style={'backgroundColor': colors['background']}, 
@@ -63,36 +79,30 @@ app.layout = html.Div(
             html.Div([                                                          # 3. ROW 1 DIV START
                 html.Div([                                                      # 4. ROW 1 - half START
                     dcc.Graph(
-                        id='parallel',                                                  # id of the graph
+                        id='ALL_SEASONS',                                                  # id of the graph
                         figure = figALL
                     )
                 ], className="six columns"),                                    # 4. ROW 1 - half END
-
+                
                 html.Div([                                                      # 4. ROW 1 - half START
                     dcc.Graph(
-                        id=seasons[0],                                                 # id of the graph
-                        figure = corrDict[seasons[0]]
-                    )
-                ], className="six columns"),                                    # 4. ROW 1 - half END            
-            ], className = "row"),                                              # 3. ROW 1 DIV END
-
-            ############## ROW 2
-            html.Div([                                                          # 3. ROW 1 DIV START
-                html.Div([                                                      # 4. ROW 1 - half START
-                    dcc.Graph(
-                        id=seasons[1],                                                  # id of the graph
-                        figure = corrDict[seasons[1]]
+                        id='DemoScatter',                                                  # id of the graph
+                        figure = figALL#returnDemoScatterFig()
                     )
                 ], className="six columns"),                                    # 4. ROW 1 - half END
 
-                html.Div([                                                      # 4. ROW 1 - half START
-                    dcc.Graph(
-                        id=seasons[2],                                                  # id of the graph
-                        figure = corrDict[seasons[2]]
-                    )
-                ], className="six columns"),                                    # 4. ROW 1 - half END            
             ], className = "row"),                                              # 3. ROW 1 DIV END
+            
+            html.Div(className='row', children=[
+                html.Div([
+                dcc.Markdown(d("""
+                    **Hover Data**
 
+                    Mouse over values in the graph.
+                """)),
+                html.Pre(id='hover-data', style=styles['pre'])
+            ], className='three columns'),
+            ])
 
         ############ END
         ],                                                                      # 1. GLOBAL CHILDREN DIV END
@@ -100,9 +110,21 @@ app.layout = html.Div(
     )                                                                           # 2. GLOBAL DIV END
 )
 
-if __name__ == '__main__':
-    app.run_server(port=8003,debug=True)
 
+
+@app.callback(
+    dash.dependencies.Output('DemoScatter', 'figure'),
+    [dash.dependencies.Input('ALL_SEASONS', 'hoverData')])    #getting the all seasons
+def display_hover_data(hoverData):                              # hoverData is a json data
+    json_string = json.dumps(hoverData)
+    json_split = json_string.split(", ")                        # index 3 is the x data
+
+    json_demoVar = json_split[3].replace('"', '').replace("x: ", '')
+    return returnDemoScatterFig(json_demoVar)
+
+
+if __name__ == '__main__':
+    app.run_server(port=8004,debug=True)
 
 
 

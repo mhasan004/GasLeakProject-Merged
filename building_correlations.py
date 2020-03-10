@@ -53,7 +53,7 @@ for i in range(0, len(delHeader)):
     corr = corr.drop(delHeader[i], axis=1)             
 corr = corr.reset_index()
 corr = corr.drop(['index'], axis=1)              # i have two indexes, so droping old one
-corr.to_csv(out2CSVFILE)
+corr.to_csv(out2CSVFILE, index=False)
 
 # 6) PLOT 1:
 season_to_do = "ALL_SEASONS"
