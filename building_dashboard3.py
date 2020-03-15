@@ -1,4 +1,4 @@
-# 4) 
+# was trying to make a drop drown picker
 import dash
 import dash_core_components as dcc   # has a component for every HTML tag (html.H1() puts the string in a h1 html tag for ex)
 import dash_html_components as html  # 
@@ -50,7 +50,6 @@ def returnDemoScatterFig(chosenCol):
     fig = px.scatter(
         corr, x="ALL_SEASONS", y=chosenCol, 
         color=chosenCol,
-        # color="red"
         # color_continuous_scale=px.colors.sequential.RdBu,
         hover_data=['Geoid', "ALL_SEASONS", "Geography" ],     
         opacity=0.2,     
@@ -99,7 +98,7 @@ app.layout = html.Div(
             html.Div([                                                          # 3. ROW 1 DIV START
                 html.Div([                                                      # 4. ROW 1 - half START
                     dcc.Graph(
-                        id='ALL_SEASONS',                                                  # id of the graph
+                        id='CorrPlot',                                                  # id of the graph
                         figure = figALL
                     )
                 ], className="six columns"),                                    # 4. ROW 1 - half END
@@ -131,10 +130,21 @@ app.layout = html.Div(
 )
 
 
+# dropdown
+@app.callback(
+    dash.dependencies.Output('CurrPlot', 'figure'),
+    [dash.dependencies.Input('dropdown', 'value')])    #getting the all seasons
+def display_hover_data(hoverData):                              # hoverData is a json data
+    json_string = json.dumps(hoverData)
+    json_split = json_string.split(", ")                        # index 3 is the x data
+    if len(json_split)>1:
+        json_demoVar = json_split[3].replace('"', '').replace("x: ", '')
+        return returnDemoScatterFig(json_demoVar)
+    return figALL
 
 @app.callback(
     dash.dependencies.Output('DemoScatter', 'figure'),
-    [dash.dependencies.Input('ALL_SEASONS', 'hoverData')])    #getting the all seasons
+    [dash.dependencies.Input('CorrPlot', 'hoverData')])    #getting the all seasons
     # [dash.dependencies.Input('hover-data', 'children')])    #getting the all seasons
 
 def display_hover_data(hoverData):                              # hoverData is a json data
@@ -145,20 +155,10 @@ def display_hover_data(hoverData):                              # hoverData is a
         return returnDemoScatterFig(json_demoVar)
     return figALL
 
-# # dropdown
-# @app.callback(
-#     dash.dependencies.Output('DemoScatter', 'figure'),
-#     [dash.dependencies.Input('dropdown', 'value')])    #getting the all seasons
-# def display_hover_data(hoverData):                              # hoverData is a json data
-#     json_string = json.dumps(hoverData)
-#     json_split = json_string.split(", ")                        # index 3 is the x data
-#     if len(json_split)>1:
-#         json_demoVar = json_split[3].replace('"', '').replace("x: ", '')
-#         return returnDemoScatterFig(json_demoVar)
-#     return figALL
+
 
 if __name__ == '__main__':
-    app.run_server(port=8007,debug=True)
+    app.run_server(port=8005,debug=True)
 
 
 
