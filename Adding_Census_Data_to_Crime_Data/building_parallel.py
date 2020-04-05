@@ -6,18 +6,27 @@ import pandas as pd
 
 crimeCSVFILE = "NYPD_Complaint_Data_Historic_WITH_CENSUS_DATA_Filtered_Merged.csv"
 df = pd.read_csv(crimeCSVFILE)
-df = df[0:4]
+
+# 0) Get ready to make ticks
+geoidListIndex = list(range(0,len(df))) # [0...2024] - tickvals, values
 
 geoidList = list(df["Geoid"]) # will be tickvals and values
 geoidStrList = [ str(x) for x in geoidList ] #turnign geoidList to geoidList where the string geoid and ints
 
-# 1) Making an array of dictionaries. Each dict is holds the attributes of each bar 
+# 1) Change Col order:
+cols = list(df.columns)
+cols.remove("TotalCrime")
+cols.insert(1,"TotalCrime")
+df = df[cols]
+
+
+# 2) Making an array of dictionaries. Each dict is holds the attributes of each bar 
 dimList = list()
 dimList.append(
     dict(
-        range    = [df["Geoid"].min(), df["Geoid"].max()],  # 1) range of bar
-        tickvals = geoidList, #2) all the ticks that can be selected
-        values   = geoidList, #3) ticks that are selected
+        range    = [0, len(df)],  # 1) range of bar
+        tickvals = geoidListIndex, #2) all the ticks that can be selected
+        values   = geoidListIndex, #3) ticks that are selected
         label    = 'Geoid',   #4) label the bar
         ticktext = geoidStrList #5) label each tick
 
@@ -32,13 +41,9 @@ for col in df:
     )
     dimList.append(parallelBarForCol)
 
-# Chnage Col order:
-cols = list(df.columns)
-cols.remove("TotalCrime")
-cols.insert(6,"TotalCrime")
-df = df[cols]
 
-# 2) Plot:
+
+# 3) Plot:
 colorCol = "TotalCrime"
 figParallel = go.Figure(
     data = go.Parcoords(
@@ -57,8 +62,8 @@ figParallel = go.Figure(
 
 figParallel.update_layout(
     autosize=False,
-    width=9000,
-    height=500,    
+    width=5000,
+    height=1000,    
 )
 figParallel.update_yaxes(
     tickangle=45,
@@ -110,6 +115,5 @@ app.layout = html.Div(
     )                                                                           # 2. GLOBAL DIV END
 )
 
-
 if __name__ == '__main__':
-    app.run_server(port=8008,debug=True)
+    app.run_server(port=8010,debug=True)
