@@ -29,7 +29,7 @@ crimeHeaders = list(corr_crimeDF.columns) + list(merged_crimeDF.columns)
 # widthPlot_corr  = 900
 # heightPlot_corr = 900
 
-widthPlot  = 800
+widthPlot  = 700
 heightPlot = 900
 
 heightPlot2 = 1200    # for the crime data to have space at bottom to show labels
@@ -41,7 +41,7 @@ def returnDemoCorrFig(season_to_show):
     fig_demoCorr = px.scatter(
         corr_demoDF, x="DemographicVariable", y=season_to_show, 
         color=season_to_show, 
-        color_continuous_scale=px.colors.sequential.RdBu,
+        # color_continuous_scale=px.colors.sequential.RdBu,
         width=widthPlot, height=heightPlot,
         hover_data=['DemographicVariable', season_to_show])
     fig_demoCorr.update_layout(
@@ -52,9 +52,10 @@ def returnDemoCorrFig(season_to_show):
     return fig_demoCorr
 
 # A2) PLOT 2: A scatter plot function for any Demograpic variable vs NYFD gas reports of a choosen season
-def returnDemoScatterFig(chosenCol, season_to_show="ALL_SEASONS"):     
+def returnDemoScatterFig(chosenCol='Total; Estimate; Total population', season_to_show="ALL_SEASONS"):     
     fig = px.scatter(
         merged_demoDF, x=season_to_show, y=chosenCol, 
+        # color_continuous_scale=px.colors.sequential.RdBu,
         color=chosenCol,
         hover_data=['Geoid', season_to_show, "Geography" ],     
         opacity=0.2,     
@@ -71,6 +72,7 @@ def returnDemoScatterFig(chosenCol, season_to_show="ALL_SEASONS"):
 def returnCrimeCorrFig(season_to_show): 
     fig_crimeCorr = px.scatter(
         corr_crimeDF, x="Crimes", y=season_to_show, 
+        # color_continuous_scale=px.colors.sequential.RdBu,
         color=season_to_show, 
         width=widthPlot, height=heightPlot2)
     fig_crimeCorr.update_layout(
@@ -81,13 +83,14 @@ def returnCrimeCorrFig(season_to_show):
     return fig_crimeCorr
 
 # B2) PLOT 4: A scatter plot function for any Crime variable vs NYFD gas reports of a choosen season
-def returnCrimeScatterFig(chosenCol, season_to_show="ALL_SEASONS"):     
+def returnCrimeScatterFig(chosenCol="TotalCrime", season_to_show="ALL_SEASONS"):     
     fig = px.scatter(
         merged_crimeDF, x=season_to_show, y=chosenCol, 
+        # color_continuous_scale=px.colors.sequential.RdBu,
         color=chosenCol, 
         hover_data=['Geoid', season_to_show, "TotalCrime" ],
         opacity=0.2,
-        width=widthPlot, height=700
+        width=widthPlot, height=600
         )
     fig.update_layout(
         title = "Number of Reports Per Census Tract ("+season_to_show+") vs "+chosenCol,
@@ -123,7 +126,7 @@ app.layout = html.Div(
                 },   
                 children = [
                     html.H1(children='GAS REPORT DASHBOARD'),                
-                    html.Div(children="somethign something something"),
+                    html.Div(children="Pick the season you want to plot. Hover over a correlation dot to show the data for each census tract"),
                 ]
             ),
             #_______________________________________________________________________________________________ ROW 1: drop down
@@ -157,7 +160,7 @@ app.layout = html.Div(
                         dcc.Graph( id='Demo_ScatterPlot_Corr', figure = returnDemoCorrFig(season_to_show_deafult))
                     ], className="six columns"),                                    
                     html.Div([                                                      
-                        dcc.Graph( id='Demo_ScatterPlot', figure = returnDemoCorrFig(season_to_show_deafult)   # will be replaced by fig from returnDemoScatterFig()
+                        dcc.Graph( id='Demo_ScatterPlot', figure = returnDemoScatterFig()#returnDemoCorrFig(season_to_show_deafult)   # will be replaced by fig from returnDemoScatterFig()
                         )
                     ],className="six columns"),                                   
             ], className = "row"),                                              
@@ -174,11 +177,13 @@ app.layout = html.Div(
                     ], className="six columns"),                                    
                     
                     html.Div([                                                      
-                        dcc.Graph( id='Crime_ScatterPlot', figure = returnCrimeCorrFig(season_to_show_deafult) # will be replaced by fig from returnCrimeScatterFig()
+                        dcc.Graph( id='Crime_ScatterPlot', figure = returnCrimeScatterFig()#returnCrimeCorrFig(season_to_show_deafult) # will be replaced by fig from returnCrimeScatterFig()
                         )
                     ], className="six columns"),                                   
             ], className = "row"),                                              
-     
+            
+            #_______________________________________________________________________________________________ ROW 4: Parallel
+
             # html.Div(className='row', children=[
             #     html.Div([
             #     dcc.Markdown(d("""
@@ -224,7 +229,7 @@ def update_figure(hoverData):                              # hoverData is a json
     [dash.dependencies.Input('Demo_ScatterPlot_Corr', 'hoverData')])      # Input: when i hover of a dot in this graph, activate this fucntion. get the 'hoverdata' 
 def update_figure2(hoverData):                              # hoverData = json data of each point. It holds the hover data i specified for each point
     if hoverData == None:
-        return  returnDemoCorrFig(season_to_show_deafult)
+        return  returnDemoScatterFig()
 
     json_string = json.dumps(hoverData)
     jsonDict = json.loads(json_string)
@@ -233,7 +238,7 @@ def update_figure2(hoverData):                              # hoverData = json d
         
         return returnDemoScatterFig(json_demoVar,season_to_show_deafult)      
     except:    
-        return  returnDemoCorrFig(season_to_show_deafult)
+        return  returnDemoScatterFig()
     
 
 @app.callback(
@@ -241,14 +246,14 @@ def update_figure2(hoverData):                              # hoverData = json d
     [dash.dependencies.Input('Crime_ScatterPlot_Corr', 'hoverData')])      # Input: when i hover of a dot in this graph, activate this fucntion. get the 'hoverdata' 
 def update_figure3(hoverData):                              # hoverData = json data of each point. It holds the hover data i specified for each point
     if hoverData == None:
-        return  returnCrimeCorrFig(season_to_show_deafult)
+        return  returnCrimeScatterFig()
     json_string = json.dumps(hoverData)
     jsonDict = json.loads(json_string)
     try:
         json_crimeVar = jsonDict["points"][0]["x"]
         return returnCrimeScatterFig(json_crimeVar,season_to_show_deafult)      
     except:    
-        return  returnCrimeCorrFig(season_to_show_deafult)
+        return  returnCrimeScatterFig()
     
 
 
