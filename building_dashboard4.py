@@ -33,26 +33,26 @@ widthPlot  = 800
 heightPlot = 900
 
 heightPlot2 = 1200    # for the crime data to have space at bottom to show labels
-
-
-season_to_show = "ALL_SEASONS"
+season_to_show_deafult = "ALL_SEASONS"
 
 ######################################################################################################### DEMOGRAPHIC DATA
 # A1) PLOT 1: Demographic Pearson R Correlation Scatter Plot
-fig_demoCorr = px.scatter(
-    corr_demoDF, x="DemographicVariable", y=season_to_show, 
-    color=season_to_show, 
-    color_continuous_scale=px.colors.sequential.RdBu,
-    width=widthPlot, height=heightPlot,
-    hover_data=['DemographicVariable', season_to_show])
-fig_demoCorr.update_layout(
-    title = '(Pearson r Correlation) '+"All Seasons"+' Reports VS Demographic Data',
-    yaxis_title = "All Seasons"+' vs Demographic Variables Correlation',
-    xaxis_title = "Demographic Variables",
-)
+def returnDemoCorrFig(season_to_show): 
+    fig_demoCorr = px.scatter(
+        corr_demoDF, x="DemographicVariable", y=season_to_show, 
+        color=season_to_show, 
+        color_continuous_scale=px.colors.sequential.RdBu,
+        width=widthPlot, height=heightPlot,
+        hover_data=['DemographicVariable', season_to_show])
+    fig_demoCorr.update_layout(
+        title = '(Pearson r Correlation) Gas Reports of '+season_to_show+' VS Demographic Data',
+        yaxis_title = "Gas Reports per Tract ("+season_to_show+") vs Demographic Variables Correlation",
+        xaxis_title = "Demographic Variables",
+    )
+    return fig_demoCorr
 
 # A2) PLOT 2: A scatter plot function for any Demograpic variable vs NYFD gas reports of a choosen season
-def returnDemoScatterFig(chosenCol):     
+def returnDemoScatterFig(chosenCol, season_to_show="ALL_SEASONS"):     
     fig = px.scatter(
         merged_demoDF, x=season_to_show, y=chosenCol, 
         color=chosenCol,
@@ -60,7 +60,7 @@ def returnDemoScatterFig(chosenCol):
         opacity=0.2,     
         width=widthPlot, height=600)
     fig.update_layout(
-        title = "Number of Reports Per Census Tract (All Seasons) vs "+chosenCol,
+        title = "Number of Reports Per Census Tract ("+season_to_show+") vs "+chosenCol,
         xaxis_title = "Number of Gas Reports Per Census Tract ("+season_to_show+")",
         yaxis_title = chosenCol,
     )
@@ -68,29 +68,31 @@ def returnDemoScatterFig(chosenCol):
 
 # ################################################################################################################################ CRIME DATA
 # B1) PLOT 3:  Crime Pearson R Correlation Scatter Plot
-fig_crimeCorr = px.scatter(
-    corr_crimeDF, x="Crimes", y=season_to_show, 
-    color=season_to_show, 
-    width=widthPlot, height=heightPlot2)
-fig_crimeCorr.update_layout(
-    title = '(Pearson r Correlation) Gas Reports of '+season_to_show+' VS Crimes',
-    yaxis_title = "Correlation between Gas Reports per Census Tract ("+season_to_show+") vs Crime Variables",
-    xaxis_title = "Crime Variables",
-)
+def returnCrimeCorrFig(season_to_show): 
+    fig_crimeCorr = px.scatter(
+        corr_crimeDF, x="Crimes", y=season_to_show, 
+        color=season_to_show, 
+        width=widthPlot, height=heightPlot2)
+    fig_crimeCorr.update_layout(
+        title = '(Pearson r Correlation) Gas Reports of '+season_to_show+' VS Crimes Data',
+        yaxis_title = "Gas Reports per Tract ("+season_to_show+") vs Crime Variables Correlation",
+        xaxis_title = "Crime Variables",
+    )
+    return fig_crimeCorr
 
 # B2) PLOT 4: A scatter plot function for any Crime variable vs NYFD gas reports of a choosen season
-def returnCrimeScatterFig(chosenCol):     
+def returnCrimeScatterFig(chosenCol, season_to_show="ALL_SEASONS"):     
     fig = px.scatter(
-        merged_crimeDF, x="ALL_SEASONS", y=chosenCol, 
+        merged_crimeDF, x=season_to_show, y=chosenCol, 
         color=chosenCol, 
-        hover_data=['Geoid', "ALL_SEASONS", "TotalCrime" ],
+        hover_data=['Geoid', season_to_show, "TotalCrime" ],
         opacity=0.2,
         width=widthPlot, height=700
         )
     fig.update_layout(
         title = "Number of Reports Per Census Tract ("+season_to_show+") vs "+chosenCol,
-        xaxis_title = "Number of as Reports Per Census Tract ("+season_to_show+")",
-        yaxis_title = chosenCol,
+        xaxis_title = "Number of Gas Reports Per Census Tract ("+season_to_show+")",
+        yaxis_title = chosenCol
     )
     return fig
 
@@ -112,53 +114,67 @@ colors = {
 
 app.layout = html.Div(
     html.Div(                                                      
-        style={'backgroundColor': colors['background']}, 
-
         children = 
         [                                                             
-            html.H1(children='GAS REPORT DASHBOARD'),                
-            html.Div(children="somethign somethign something"),
-            
+            html.Div(
+                style={                                                                                       # background fo graph to be white
+                    'backgroundColor': colors['background'],
+                    'margin': 0
+                },   
+                children = [
+                    html.H1(children='GAS REPORT DASHBOARD'),                
+                    html.Div(children="somethign something something"),
+                ]
+            ),
             #_______________________________________________________________________________________________ ROW 1: drop down
             html.Div(
-                style={'backgroundColor': colors['text']},                         # background fo graph to be white
+                style={                                                                                       # background fo graph to be white
+                    'backgroundColor': colors['text'],
+                    'marginBottom': 0, 'marginTop': 0
+                },                         
                 children = [ 
                     dcc.Dropdown(
                         id='dropdown',
                         options=[
-                            {'label': 'ALL SEASON', 'value': 'All Seasons'},
+                            {'label': 'All Seasons', 'value': "ALL_SEASONS"},
                             {'label': 'Summer', 'value': 'Summer'},
                             {'label': 'Spring', 'value': 'Spring'},
                             {'label': 'Winter', 'value': 'Winter'},
                             {'label': 'Fall', 'value': 'Autumn'}
                         ],
+                        value = 'ALL_SEASONS'
                     ),
             ], className = "row"),
 
-            #_______________________________________________________________________________________________ ROW 2: scatter 
+            #_______________________________________________________________________________________________ ROW 2: Plot 1 2
             html.Div(
-                style={'backgroundColor': colors['text']},                         # white backgroud of graph
+                style={                                                                                       
+                    'backgroundColor': colors['text'],
+                    'marginBottom': 50, 'marginTop': 40,
+                },  
                 children = [                                             
                     html.Div([                                                      
-                        dcc.Graph( id='Demo_ScatterPlot_Corr', figure = fig_demoCorr)
+                        dcc.Graph( id='Demo_ScatterPlot_Corr', figure = returnDemoCorrFig(season_to_show_deafult))
                     ], className="six columns"),                                    
-                    
                     html.Div([                                                      
-                        dcc.Graph( id='Demo_ScatterPlot', figure = fig_demoCorr   # will be replaced by fig from returnDemoScatterFig()
+                        dcc.Graph( id='Demo_ScatterPlot', figure = returnDemoCorrFig(season_to_show_deafult)   # will be replaced by fig from returnDemoScatterFig()
                         )
-                    ], className="six columns"),                                   
+                    ],className="six columns"),                                   
             ], className = "row"),                                              
      
-            #_______________________________________________________________________________________________ ROW 3:
+            #_______________________________________________________________________________________________ ROW 3: Plot 3 4
             html.Div(
-                style={'backgroundColor': colors['text']},                         # white backgroud of graph
+                style={                                                                                       
+                    'backgroundColor': colors['text'],
+                    'marginBottom': 50, 'marginTop': 40,
+                },                  
                 children = [                                             
                     html.Div([                                                      
-                        dcc.Graph( id='Crime_ScatterPlot_Corr', figure = fig_crimeCorr)
+                        dcc.Graph( id='Crime_ScatterPlot_Corr', figure = returnCrimeCorrFig(season_to_show_deafult))
                     ], className="six columns"),                                    
                     
                     html.Div([                                                      
-                        dcc.Graph( id='Crime_ScatterPlot', figure = fig_crimeCorr # will be replaced by fig from returnCrimeScatterFig()
+                        dcc.Graph( id='Crime_ScatterPlot', figure = returnCrimeCorrFig(season_to_show_deafult) # will be replaced by fig from returnCrimeScatterFig()
                         )
                     ], className="six columns"),                                   
             ], className = "row"),                                              
@@ -191,58 +207,50 @@ app.layout = html.Div(
 
 
 
+# dropdown
+@app.callback(
+        [   dash.dependencies.Output('Demo_ScatterPlot_Corr', 'figure'),
+            dash.dependencies.Output('Crime_ScatterPlot_Corr', 'figure'),
+        ],
+        [dash.dependencies.Input('dropdown', 'value')]
+    )    #getting the all seasons
+def update_figure(hoverData):                              # hoverData is a json data
+    season_to_show_deafult = hoverData
+    return returnDemoCorrFig(hoverData), returnCrimeCorrFig(hoverData)#, returnDemoScatterFig(chosenCol_demo, hoverData)#,returnCrimeScatterFig(chosenCol_crime, hoverData)
+
+
 @app.callback(
     dash.dependencies.Output('Demo_ScatterPlot', 'figure'),               # Output: graph id im targetting, the property of id im targetting 
     [dash.dependencies.Input('Demo_ScatterPlot_Corr', 'hoverData')])      # Input: when i hover of a dot in this graph, activate this fucntion. get the 'hoverdata' 
-def display_hover_data(hoverData):                              # hoverData = json data of each point. It holds the hover data i specified for each point
+def update_figure2(hoverData):                              # hoverData = json data of each point. It holds the hover data i specified for each point
     if hoverData == None:
-        return fig_demoCorr
+        return  returnDemoCorrFig(season_to_show_deafult)
+
     json_string = json.dumps(hoverData)
     jsonDict = json.loads(json_string)
     try:
         json_demoVar = jsonDict["points"][0]["x"]
-        return returnDemoScatterFig(json_demoVar)      
+        
+        return returnDemoScatterFig(json_demoVar,season_to_show_deafult)      
     except:    
-        return fig_demoCorr
+        return  returnDemoCorrFig(season_to_show_deafult)
     
 
 @app.callback(
     dash.dependencies.Output('Crime_ScatterPlot', 'figure'),               # Output: graph id im targetting, the property of id im targetting 
     [dash.dependencies.Input('Crime_ScatterPlot_Corr', 'hoverData')])      # Input: when i hover of a dot in this graph, activate this fucntion. get the 'hoverdata' 
-def display_hover_data(hoverData):                              # hoverData = json data of each point. It holds the hover data i specified for each point
+def update_figure3(hoverData):                              # hoverData = json data of each point. It holds the hover data i specified for each point
     if hoverData == None:
-        return fig_crimeCorr
+        return  returnCrimeCorrFig(season_to_show_deafult)
     json_string = json.dumps(hoverData)
     jsonDict = json.loads(json_string)
     try:
         json_crimeVar = jsonDict["points"][0]["x"]
-        return returnCrimeScatterFig(json_crimeVar)      
+        return returnCrimeScatterFig(json_crimeVar,season_to_show_deafult)      
     except:    
-        return fig_crimeCorr
+        return  returnCrimeCorrFig(season_to_show_deafult)
     
 
-
-
-
-
-
-
-
-
-
-
-
-# # dropdown
-# @app.callback(
-#     dash.dependencies.Output('DemoScatter', 'figure'),
-#     [dash.dependencies.Input('dropdown', 'value')])    #getting the all seasons
-# def display_hover_data(hoverData):                              # hoverData is a json data
-#     json_string = json.dumps(hoverData)
-#     json_split = json_string.split(", ")                        # index 3 is the x data
-#     if len(json_split)>1:
-#         json_demoVar = json_split[3].replace('"', '').replace("x: ", '')
-#         return returnDemoScatterFig(json_demoVar)
-#     return fig_demoCorr
 
 if __name__ == '__main__':
     app.run_server(port=8038,debug=True)
