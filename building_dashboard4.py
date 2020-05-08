@@ -13,21 +13,41 @@ from dash.dependencies import Input, Output
 import json
 from textwrap import dedent as d
 
+# For Demogrpahic Graph:
 csvFile_demoMerged = "DataFiles/FDNY/Seasonal2017_2018_Demographics.csv"
 merged_demoDF = pd.read_csv(csvFile_demoMerged)
 csvFile_demoCorr = "DataFiles/FDNY/Seasonal2017_2018_Demographic_Correlation.csv"
 corr_demoDF = pd.read_csv(csvFile_demoCorr)
 
+# For Crime Graphs:
 csvFile_crimeMerged  = "DataFiles/Crime and Demographics/Crime/ACS_10_5YR_S0101_With_Census_Data_FILTERED_Merged.csv"
 merged_crimeDF = pd.read_csv(csvFile_crimeMerged)
 csvFile_crimeCorr     = "DataFiles/Crime and Demographics/Crime/ACS_10_5YR_S0101_With_Census_Data_FILTERED_Corr.csv"
 corr_crimeDF = pd.read_csv(csvFile_crimeCorr)
 
+# For Parallel graph:
+NYFD_Crime2_CSV_For_Parallel= "DataFiles/Crime and Demographics/Crime/NYPD_Complaint_Data_Historic_WITH_CENSUS_DATA_Filtered_Merged_FilteredMore.csv"
+parallelDF = pd.read_csv(NYFD_Crime2_CSV_For_Parallel)
+colorCol = "BoroughColors"
+countyColorOrder = ["Richmond County", "Queens County", "Bronx County","Kings County","New York County"]
+filteredCol = [
+    'Geoid',
+    'TotalCrime',
+    'Spring',
+    'Summer',
+    'Autumn',
+    'Winter',
+    'ALL_SEASONS',
+    'CountyName',
+    'CountyName',
+    'CensusTract_2010_NAME',
+    'BoroughColors'
+]
+
+
+# For correlation crime and demo headers so less compact:
 demoHeaders = list(corr_demoDF.columns) + list(merged_demoDF.columns) 
 crimeHeaders = list(corr_crimeDF.columns) + list(merged_crimeDF.columns) 
-
-# widthPlot_corr  = 900
-# heightPlot_corr = 900
 
 widthPlot  = 700
 heightPlot = 900
@@ -35,7 +55,7 @@ heightPlot = 900
 heightPlot2 = 1200    # for the crime data to have space at bottom to show labels
 season_to_show_deafult = "ALL_SEASONS"
 
-######################################################################################################### DEMOGRAPHIC DATA
+######################################################################################################### NYFD DEMOGRAPHIC DATA
 # A1) PLOT 1: Demographic Pearson R Correlation Scatter Plot
 def returnDemoCorrFig(season_to_show): 
     fig_demoCorr = px.scatter(
@@ -67,7 +87,7 @@ def returnDemoScatterFig(chosenCol='Total; Estimate; Total population', season_t
     )
     return fig
 
-# ################################################################################################################################ CRIME DATA
+# ################################################################################################################################ NYFD CRIME DATA
 # B1) PLOT 3:  Crime Pearson R Correlation Scatter Plot
 def returnCrimeCorrFig(season_to_show): 
     fig_crimeCorr = px.scatter(
@@ -98,6 +118,81 @@ def returnCrimeScatterFig(chosenCol="TotalCrime", season_to_show="ALL_SEASONS"):
         yaxis_title = chosenCol
     )
     return fig
+# ################################################################################################################################ NYFD CRIME DATA Parallel
+def geoid_ticks_to_plot(pick = "ALL_SEASONS"):
+    # 1) What geoids should be plotted in the parallel graph?
+    if pick == "ALL_SEASONS":
+        tick_tickIds = list(range(0,len(parallelDF)))        # [0...2024] - tickvals, values. parallelDF row ids for all stuff im printign
+        tick_geoidTickVals = list(parallelDF["Geoid"])       # will be tickvals and values
+        tick_geoidTickVals_str = [ str(x) for x in tick_geoidTickVals ] #turnign geoidList to geoidList where the string geoid and ints
+        return [tick_tickIds, tick_geoidTickVals_str]
+    tick_tickIds = parallelDF.index[parallelDF['Geoid'] ==int(pick)].tolist() #the parallelDF row id for that geoid
+    tick_geoidTickVals_str = [str(tick_tickIds)]
+    return [tick_tickIds, tick_geoidTickVals_str]
+
+def making_dimension_list_for_parallel( GEOID_to_plot):
+    global parallelDF
+    parallelDF = parallelDF[filteredCol] # doing this so the parallel plot dont get so squished
+    # 2) Making an array of dictionaries. Each dict is holds the attributes of each bar of the parallel graph
+    dimList = list()
+    dimList.append(
+        dict(
+            range    = [0, len(parallelDF)],                                          # 1) tick0, tick1, etc....
+            tickvals = list(range(0,len(parallelDF), 100)),  # (1) numbering ticks to be named 
+            values   = geoid_ticks_to_plot(GEOID_to_plot)[0],                 # (2) which rows to shows? selects the tickids
+            label    = 'Geoid',                      # (3) label the bar
+            ticktext = geoid_ticks_to_plot(GEOID_to_plot)[1],       # (4) name of each tick?
+        ))     
+    for col in parallelDF:
+        if col == "Geoid" or col == "CountyName" or col == "CensusTract_2010_NAME" or col == "BoroughColors":
+            continue
+        parallelBarForCol = dict(
+            range = [parallelDF[col].min(), parallelDF[col].max()],
+            label = col, 
+            values = parallelDF[col]
+        )
+        dimList.append(parallelBarForCol)
+    return dimList
+
+def return_parallel_plot_fig( GEOID_to_plot = "ALL_SEASONS"):
+    # 3) Plot:
+    fig = go.Figure(
+        data = go.Parcoords(
+            # LINE COLOR DEF: 
+            line = dict( 
+               color = parallelDF[colorCol], #each lines' color val
+               colorscale = ["purple", "lightcoral", "red", "firebrick","maroon"], #[counties0->4]
+               colorbar = dict(
+                   tickvals = [0,1,2,3,4],                                       #[counties0->4]
+                   ticktext = countyColorOrder,                                   #[counties0->4]
+                   title = {'text': "NYC Counties"},
+                   x = -0.5,      #******delete this to turn the colorscale bar to normal position
+                   ticks = "outside",
+               ),
+               showscale = True, #show the scale 
+               cmin = parallelDF[colorCol].min(),
+               cmax = parallelDF[colorCol].max(),
+            ),
+            dimensions = making_dimension_list_for_parallel(GEOID_to_plot),
+            labelangle = -45,
+        )
+    )
+
+    fig.update_layout(
+        title = "Focused look on Season Gas Leak Reports and Total Crime of all GEOID in NYC",
+        autosize=False,
+        width  = 900,
+        height = 600,
+        margin=dict(
+            l=10,
+            r=100,
+            b=10,
+            t=200,
+            pad=4
+        ),
+    )
+    return fig
+# parallel_plot("ALL_SEASONS").show()
 
 # ################################################################################################################################ 
 
@@ -169,7 +264,7 @@ app.layout = html.Div(
             html.Div(
                 style={                                                                                       
                     'backgroundColor': colors['text'],
-                    'marginBottom': 50, 'marginTop': 40,
+                    'marginBottom': 0, 'marginTop': 10,
                 },                  
                 children = [                                             
                     html.Div([                                                      
@@ -196,12 +291,14 @@ app.layout = html.Div(
             
             #_______________________________________________________________________________________________ ROW 4:
             html.Div(
-                style={'backgroundColor': colors['text']},                         # white backgroud of graph
+                style={                                                                                       
+                    'backgroundColor': colors['text'],
+                    'marginBottom': 500, 'marginTop': 0,
+                },                 
                 children = [                                             
-                    html.Div([                                                      
-                    ], className="six columns"),                                                        
-                    html.Div([                                                      
-                    ], className="six columns"),                                   
+                    html.Div([       
+                        dcc.Graph( id='Crime_ParallelPlot', figure = return_parallel_plot_fig("ALL_SEASONS"))
+                    ], className="twelve columns"),                                  
             ], className = "row"),   
 
         #_______________________________________________________________________________________________ END
