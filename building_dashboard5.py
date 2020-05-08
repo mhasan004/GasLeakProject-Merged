@@ -154,7 +154,7 @@ def making_dimension_list_for_parallel( GEOID_to_plot):
         dimList.append(parallelBarForCol)
     return dimList
 
-def return_parallel_plot_fig( GEOID_to_plot = "ALL_SEASONS", height = 800):
+def return_parallel_plot_fig( GEOID_to_plot = "ALL_SEASONS"):
     # 3) Plot:
     fig = go.Figure(
         data = go.Parcoords(
@@ -182,7 +182,7 @@ def return_parallel_plot_fig( GEOID_to_plot = "ALL_SEASONS", height = 800):
         title = "Focused look on Season Gas Leak Reports and Total Crime of all GEOID in NYC",
         autosize=False,
         width  = widthPlot,#1000,
-        height = height,#700,
+        height = 800,#700,
         margin=dict(
             l=10,
             r=100,
@@ -248,47 +248,56 @@ app.layout = html.Div(
                         value = 'ALL_SEASONS'
                     ),
             ],className = "row"),
-
-            #_______________________________________________________________________________________________ ROW 2: Plot 1 2
             html.Div(
-                style={                                                                                       
+                style={                                                                                       # background fo graph to be white
                     'backgroundColor': colors['text'],
-                    'marginBottom': 50, 'marginTop': 40,
-                },  
-                children = [                                             
-                    html.Div([                                                      
-                        dcc.Graph( id='Demo_ScatterPlot_Corr', figure = returnDemoCorrFig(season_to_show_deafult))
-                    ],  className="four columns"),                                    
-                    html.Div([                                                      
-                        dcc.Graph( id='Demo_ScatterPlot', figure = returnDemoScatterFig()#returnDemoCorrFig(season_to_show_deafult)   # will be replaced by fig from returnDemoScatterFig()
-                        )
-                    ],className="four columns"),
-
-                    html.Div([       
-                        dcc.Graph( id='Crime_ParallelPlot', figure = return_parallel_plot_fig("ALL_SEASONS"))
-                    ], className="four columns"),     
-
-            ], 
-            className = "row"
-            ),                                              
-     
-            #_______________________________________________________________________________________________ ROW 3: Plot 3 4
-            html.Div(
-                style={                                                                                       
-                    'backgroundColor': colors['text'],
-                    'marginBottom': 0, 'marginTop': 10,
-                },                  
-                children = [                                             
-                    html.Div([                                                      
-                        dcc.Graph( id='Crime_ScatterPlot_Corr', figure = returnCrimeCorrFig(season_to_show_deafult))
-                    ], className="four columns"),                                    
-                    
-                    html.Div([                                                      
-                        dcc.Graph( id='Crime_ScatterPlot', figure = returnCrimeScatterFig()#returnCrimeCorrFig(season_to_show_deafult) # will be replaced by fig from returnCrimeScatterFig()
-                        )
-                    ], className="four columns"),                                   
-            ], className = "row"),                                              
+                    'marginBottom': 0, 'marginTop': 0,
+                },                         
+                children = [ 
+                    #_______________________________________________________________________________________________ ROW 2: Plot 1 2
+                    html.Div(
+                        style={                                                                                       
+                            'backgroundColor': "red",#"colors['text'],
+                            'marginBottom': 50, 'marginTop': 40,
+                        },  
+                        children = [                                             
+                            # html.Div([                                                      
+                            #     dcc.Graph( id='Demo_ScatterPlot_Corr', figure = returnDemoCorrFig(season_to_show_deafult))
+                            # ],  className="four columns"),                                    
+                            # html.Div([                                                      
+                            #     dcc.Graph( id='Demo_ScatterPlot', figure = returnDemoScatterFig()#returnDemoCorrFig(season_to_show_deafult)   # will be replaced by fig from returnDemoScatterFig()
+                            #     )
+                            # ],className="four columns"),
+                        ], className = "row"),                                              
             
+                    #_______________________________________________________________________________________________ ROW 3: Plot 3 4
+                    html.Div(
+                        style={                                                                                       
+                            'backgroundColor': colors['text'],
+                            'marginBottom': 0, 'marginTop': 10,
+                        },                  
+                        children = [                                             
+                            # html.Div([                                                      
+                            #     dcc.Graph( id='Crime_ScatterPlot_Corr', figure = returnCrimeCorrFig(season_to_show_deafult))
+                            # ], className="four columns"),                                    
+                            
+                            # html.Div([                                                      
+                            #     dcc.Graph( id='Crime_ScatterPlot', figure = returnCrimeScatterFig()#returnCrimeCorrFig(season_to_show_deafult) # will be replaced by fig from returnCrimeScatterFig()
+                            #     )
+                        ], className="four columns"),                                   
+                    ], className = "row"),      
+                    html.Div(
+                        style={                                                                                       
+                            'backgroundColor': colors['text'],
+                            'marginBottom': 0, 'marginTop': 10,
+                        },                  
+                        children = [ 
+                            # html.Div([       
+                            #     dcc.Graph( id='Crime_ParallelPlot', figure = return_parallel_plot_fig("ALL_SEASONS"))
+                        ], className="four columns"),     
+                    ], className = "row"),    
+
+            ],className = "row2"),
             #_______________________________________________________________________________________________ ROW 4: Parallel
 
             # html.Div(className='row', children=[
@@ -493,7 +502,7 @@ def update_figure_P3(state1, state2, demoHover, crimeHover):
     jsonDict = json.loads(json_string)
     try:
         json_dot_geoid = jsonDict["points"][0]["customdata"][0]
-        return  return_parallel_plot_fig(json_dot_geoid,400)
+        return  return_parallel_plot_fig(json_dot_geoid)
     except:
         return  return_parallel_plot_fig("ALL_SEASONS")
 
@@ -518,7 +527,9 @@ def update_figure_P3(state1, state2, demoHover, crimeHover):
 
 
 if __name__ == '__main__':
-    app.run_server(port=8128,debug=True)
+    app.run_server(port=8049,debug=True)
+
+
 
 
 
