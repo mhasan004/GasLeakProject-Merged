@@ -497,18 +497,6 @@ def update_figure_P3(state1, state2, demoHover, crimeHover):
     except:
         return  return_parallel_plot_fig("ALL_SEASONS")
 
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     app.run_server(port=8129,debug=True)
 
