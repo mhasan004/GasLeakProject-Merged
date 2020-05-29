@@ -13,7 +13,7 @@ from dash.dependencies import Input, Output
 import json
 from textwrap import dedent as d
 
-stateCount = 0                          # ************** cince dash doesnt tell u what input triggered a callback, use this varibale to write to an invisible div, extracting the div var and see which input it was that called it
+stateCount = 0                          # ************** since dash doesnt tell u what input triggered a callback, use this varibale to write to an invisible div, extracting the div var and see which input it was that called it
 # For Demogrpahic Graph:
 csvFile_demoMerged = "DataFiles/FDNY/Seasonal2017_2018_Demographics.csv"
 merged_demoDF = pd.read_csv(csvFile_demoMerged)
@@ -122,26 +122,26 @@ def returnCrimeScatterFig(chosenCol="TotalCrime", season_to_show="ALL_SEASONS"):
 def geoid_ticks_to_plot(pick = "ALL_SEASONS"):
     # 1) What geoids should be plotted in the parallel graph?
     if pick == "ALL_SEASONS":
-        tick_tickIds = list(range(0,len(parallelDF)))        # [0...2024] - tickvals, values. parallelDF row ids for all stuff im printign
-        tick_geoidTickVals = list(parallelDF["Geoid"])       # will be tickvals and values
-        tick_geoidTickVals_str = [ str(x) for x in tick_geoidTickVals ] #turnign geoidList to geoidList where the string geoid and ints
+        tick_tickIds = list(range(0,len(parallelDF)))                                   # [0...2024] - tickvals, values. parallelDF row ids for all stuff im printign
+        tick_geoidTickVals = list(parallelDF["Geoid"])                                  # will be tickvals and values
+        tick_geoidTickVals_str = [ str(x) for x in tick_geoidTickVals ]                 # turnign geoidList to geoidList where the string geoid and ints
         return [tick_tickIds, tick_geoidTickVals_str]
-    tick_tickIds = parallelDF.index[parallelDF['Geoid'] ==int(pick)].tolist() #the parallelDF row id for that geoid
+    tick_tickIds = parallelDF.index[parallelDF['Geoid'] ==int(pick)].tolist()           # the parallelDF row id for that geoid
     tick_geoidTickVals_str = [str(tick_tickIds)]
     return [tick_tickIds, tick_geoidTickVals_str]
 
 def making_dimension_list_for_parallel( GEOID_to_plot):
     global parallelDF
-    parallelDF = parallelDF[filteredCol] # doing this so the parallel plot dont get so squished
+    parallelDF = parallelDF[filteredCol]                                                # doing this so the parallel plot dont get so squished
     # 2) Making an array of dictionaries. Each dict is holds the attributes of each bar of the parallel graph
     dimList = list()
     dimList.append(
         dict(
-            range    = [0, len(parallelDF)],                                          # 1) tick0, tick1, etc....
+            range    = [0, len(parallelDF)],                                            # 1) tick0, tick1, etc....
             tickvals = list(range(0,len(parallelDF), 100)),  # (1) numbering ticks to be named 
-            values   = geoid_ticks_to_plot(GEOID_to_plot)[0],                 # (2) which rows to shows? selects the tickids
-            label    = 'Geoid',                      # (3) label the bar
-            ticktext = geoid_ticks_to_plot(GEOID_to_plot)[1],       # (4) name of each tick?
+            values   = geoid_ticks_to_plot(GEOID_to_plot)[0],                           # (2) which rows to shows? selects the tickids
+            label    = 'Geoid',                                                         # (3) label the bar
+            ticktext = geoid_ticks_to_plot(GEOID_to_plot)[1],                           # (4) name of each tick?
         ))     
     for col in parallelDF:
         if col == "Geoid" or col == "CountyName" or col == "CensusTract_2010_NAME" or col == "BoroughColors":
@@ -160,16 +160,16 @@ def return_parallel_plot_fig( GEOID_to_plot = "ALL_SEASONS", height = 800):
         data = go.Parcoords(
             # LINE COLOR DEF: 
             line = dict( 
-               color = parallelDF[colorCol], #each lines' color val
-               colorscale = ["purple", "lightcoral", "red", "firebrick","maroon"], #[counties0->4]
+               color = parallelDF[colorCol],                                        # each lines' color val
+               colorscale = ["purple", "lightcoral", "red", "firebrick","maroon"],  # [counties0->4]
                colorbar = dict(
-                   tickvals = [0,1,2,3,4],                                       #[counties0->4]
-                   ticktext = countyColorOrder,                                   #[counties0->4]
+                   tickvals = [0,1,2,3,4],                                          # [counties0->4]
+                   ticktext = countyColorOrder,                                     # [counties0->4]
                    title = {'text': "NYC Counties"},
-                   x = -0.5,      #******delete this to turn the colorscale bar to normal position
+                   x = -0.5,                                                        # ******delete this to turn the colorscale bar to normal position
                    ticks = "outside",
                ),
-               showscale = True, #show the scale 
+               showscale = True,                                                    # show the scale 
                cmin = parallelDF[colorCol].min(),
                cmax = parallelDF[colorCol].max(),
             ),
@@ -197,8 +197,8 @@ def return_parallel_plot_fig( GEOID_to_plot = "ALL_SEASONS", height = 800):
 # ################################################################################################################################ 
 
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']           # external cssCSS file for Bootstraps
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)            # initialize app with the external CSS file
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']               # external cssCSS file for Bootstraps
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)                # initialize app with the external CSS file
 styles = {
     'pre': {
         'border': 'thin lightgrey solid',
@@ -260,7 +260,7 @@ app.layout = html.Div(
                         dcc.Graph( id='Demo_ScatterPlot_Corr', figure = returnDemoCorrFig(season_to_show_deafult))
                     ],  className="four columns"),                                    
                     html.Div([                                                      
-                        dcc.Graph( id='Demo_ScatterPlot', figure = returnDemoScatterFig()#returnDemoCorrFig(season_to_show_deafult)   # will be replaced by fig from returnDemoScatterFig()
+                        dcc.Graph( id='Demo_ScatterPlot', figure = returnDemoScatterFig()                   # returnDemoCorrFig(season_to_show_deafult)   # will be replaced by fig from returnDemoScatterFig()
                         )
                     ],className="four columns"),
 
@@ -509,16 +509,8 @@ def update_figure_P3(state1, state2, demoHover, crimeHover):
 
 
 
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
-    app.run_server(port=8128,debug=True)
+    app.run_server(port=8129,debug=True)
 
 
 
