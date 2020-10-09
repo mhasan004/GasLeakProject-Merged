@@ -19,3 +19,9 @@ Dashboard to check relevancy of a dataset before use. Compares the correlation o
 3) Run dashboard: 
     
     `python3 Dashboard.py`
+
+
+## Files:
+* Data files can be found in `/Datafiles`
+* `Map_2010_ConEdison_MonthlyPlots.ipynb` - Shows tha frequency map of ConEdison gas leak reports from Decemebr - February
+
