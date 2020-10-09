@@ -1,10 +1,11 @@
 # GasLeakCombined
 
-## ConEdison Gas Leak Report Scraper program - `scraper_ConEdison.py` - new version here: https://github.com/mhasan004/GasLeakProject/blob/master/Getting_GasLeak_Data/scraper_ConEdison.py
-    * Get the latest gas leak reports using the ConEdison API and then retrieves the census location data using the Census Beru API and then updates all files in `GasLeakCombined/DataFiles/ConEdison`
-    * `GasHistory_2010_ConEdisonTracts.csv` - record of all the gas leak report data with its respective census location data. 
-    * `GasHistory_2010_ReportFrequency_Hourly.csv`  - lists how many gas leaks reports there were per hour, per census tract, per day 
-    * `GasHistory_2010_ReportFrequency_Monthly.csv` - lists how many gas leaks reports there were per month, per census tract
+## ConEdison Gas Leak Report Scraper program - `scraper_ConEdison.py` 
+ * new version here: https://github.com/mhasan004/GasLeakProject/blob/master/Getting_GasLeak_Data/scraper_ConEdison.py
+ * Get the latest gas leak reports using the ConEdison API and then retrieves the census location data using the Census Beru API and then updates all files in `GasLeakCombined/DataFiles/ConEdison`
+ * `GasHistory_2010_ConEdisonTracts.csv` - record of all the gas leak report data with its respective census location data. 
+ * `GasHistory_2010_ReportFrequency_Hourly.csv`  - lists how many gas leaks reports there were per hour, per census tract, per day 
+ * `GasHistory_2010_ReportFrequency_Monthly.csv` - lists how many gas leaks reports there were per month, per census tract
 
 
 
