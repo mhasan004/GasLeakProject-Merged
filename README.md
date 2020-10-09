@@ -24,6 +24,6 @@ Dashboard to check relevancy of a dataset before use. Compares the correlation o
 ## Files:
 * Data files can be found in `/Datafiles`
 * `Map_2010_ConEdison_MonthlyPlots.ipynb` - Shows the frequency map of ConEdison gas leak reports from December - February
-<img src=PicGifs/MapPic_Conedison_Jan2020.png width="500">
+<img src=PicGifs/MapPic_Conedison_Jan2020.PNG width="500">
 
 
