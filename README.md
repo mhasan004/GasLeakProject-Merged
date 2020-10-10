@@ -1,7 +1,7 @@
 # GasLeakCombined
 
 ## A) ConEdison Gas Leak Report Scraper program - `scraper_ConEdison.py` 
- * new version here: https://github.com/mhasan004/GasLeakProject/blob/master/Getting_GasLeak_Data/scraper_ConEdison.py
+ * New version here: https://github.com/mhasan004/GasLeakProject/blob/master/Getting_GasLeak_Data/scraper_ConEdison.py
  1) Gets the latest gas leak reports from Kings, Queens, Manhattan, Bronx, and Westchestrer counties using the Con Edison API
  2) Retrieves the 2010 census tract data for each report using the Census Bureau API 
  3) Updates all files in `GasLeakCombined/DataFiles/ConEdison`
@@ -10,7 +10,8 @@
      * `GasHistory_2010_ReportFrequency_Monthly.csv` - lists how many gas leaks reports there were per month, per census tract
 
 ## B) Correlation Comparison Program - Easily Check Relevancy of a Dataset
-Dashboard to check relevancy of a dataset before use. Compares the correlation of all fields of a dataset against our gas leak report data for all seasons, Summer only, Autumn only, Winter only, Fall only. Can use this program to easy find which field, if any, of the dataset can be usable. Fields with high correlation are usable. 
+* Dashboard to check the relevancy of a dataset before use. Compares the correlation of all fields of a dataset against our gas leak report data for any season. 
+* Can use this program to easy find which field of the dataset, if any, of the dataset can be usable. Fields with high correlation are usable. 
 
 <img src=PicGifs/dashboard_demo_faster.gif width="800">
 
@@ -20,10 +21,7 @@ Dashboard to check relevancy of a dataset before use. Compares the correlation o
 * **Census Tract Parallel Graph (Third Graph):** The third graph of the first row shows the gas leak data for all seasons and the total crime report for a selected census tract. 
  
 ### To run:
-1) Make Enviornment: 
-    `virtualenv gasEnv`
-
-    `source gasEnv/bin/activate`
+1) Make Enviornment:  `virtualenv gasEnv`, `source gasEnv/bin/activate`
     
 2) Install Dependencies: 
     `pip3 install -r requirements.txt`
