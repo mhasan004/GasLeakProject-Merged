@@ -18,7 +18,7 @@
 * **Pearson R Correlation Graph (Left Graph):** The graph on the left shows the Pearson R Correlation between our gas leak dataset (datasetA) and each fields of another dataset (datasetB). The higher the dot, the higher the correlation. Hovering over a dot shows the field of the datasetB that is being shows and the correlation value.
   * Example: we can see how correlated our gas leak data for a season is compared to all field of a population dataset (ex: our data vs total population, our data vs population of males, our data vs population of females, etc)
 * **Selected Scatter Graph (Middle Graph):** When a correlation dot is selected, the graph in the middle will generate a scatter plot of the number of reports per census tract vs the field of datasetB. Each dot represents a census tract. Hovering over the dot shows the census tract number and location, the gas report number, and the datasetB field for that census tract.
-* **Census Tract Parallel Graph (Third Graph):** The third graph of the first row shows the gas leak data for all seasons and the total crime report for a selected census tract. 
+* **Census Tract Parallel Coordinate Graph (Third Graph):** The third graph of the first row shows the gas leak data for all seasons and the total crime report for a selected census tract. 
 * **Dropdown:** Can test datasetB with different seasons of our gas leak report data
  
 ### To run:
