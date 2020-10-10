@@ -1,6 +1,6 @@
 # GasLeakCombined
 
-## ConEdison Gas Leak Report Scraper program - `scraper_ConEdison.py` 
+## A) ConEdison Gas Leak Report Scraper program - `scraper_ConEdison.py` 
  * new version here: https://github.com/mhasan004/GasLeakProject/blob/master/Getting_GasLeak_Data/scraper_ConEdison.py
  1) Gets the latest gas leak reports from Kings, Queens, Manhattan, Bronx, and Westchestrer counties using the Con Edison API
  2) Retrieves the 2010 census tract data for each report using the Census Bureau API 
@@ -9,7 +9,7 @@
      * `GasHistory_2010_ReportFrequency_Hourly.csv`  - lists how many gas leaks reports there were per hour, per census tract, per day 
      * `GasHistory_2010_ReportFrequency_Monthly.csv` - lists how many gas leaks reports there were per month, per census tract
 
-## Correlation Comparison Program - Easily Check Relevancy of a Dataset
+## B) Correlation Comparison Program - Easily Check Relevancy of a Dataset
 Dashboard to check relevancy of a dataset before use. Compares the correlation of all fields of a dataset against our gas leak report data for all seasons, Summer only, Autumn only, Winter only, Fall only. Can use this program to easy find which field, if any, of the dataset can be usable. Fields with high correlation are usable. 
 
 <img src=PicGifs/dashboard_demo_faster.gif width="800">
@@ -21,21 +21,17 @@ Dashboard to check relevancy of a dataset before use. Compares the correlation o
  
 ### To run:
 1) Make Enviornment: 
-
     `virtualenv gasEnv`
 
     `source gasEnv/bin/activate`
-
-2) Install Dependencies: 
     
+2) Install Dependencies: 
     `pip3 install -r requirements.txt`
 
 3) Run dashboard: 
-    
     `python3 Dashboard.py`
 
-
-## Files:
+## C) Files:
 * Data files can be found in `/Datafiles`
 * `Map_2010_ConEdison_MonthlyPlots.ipynb` - Shows the frequency map of ConEdison gas leak reports from December - February
 <img src=PicGifs/MapPic_Conedison_Jan2020.PNG width="500">
