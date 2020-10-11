@@ -15,6 +15,7 @@
 * Can use this program to easy find which field of the dataset, if any, of the dataset can be usable. Fields with high correlation are usable. 
 
 <img src=PicGifs/dashboard_demo_faster.gif width="800">
+
 * This program easily checks the correlation between all fields of a dataset with our gas leak dataset. Field with little correlation aren't researched further. 
 * In this example, we are finding correlations between our gas leak dataset and all fields of the demographic and crime datasets
 * We can test with all seasons of our gas leak dataset, or pick individual seasons to test again
